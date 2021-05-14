@@ -79,8 +79,8 @@ class AddNoteFragment : BaseFragment() {
         }
     }
 
-    // Below we are deleting the note
-    //Displaying alert dialog to delete it
+    // Below we are deleting the note.
+    // Displaying alert dialog to delete it.
     private fun deleteNote() {
         AlertDialog.Builder(context).apply {
             setTitle("Are you sure")
