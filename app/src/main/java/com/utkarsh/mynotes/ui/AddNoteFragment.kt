@@ -36,7 +36,7 @@ class AddNoteFragment : BaseFragment() {
 
         button_save.setOnClickListener { view ->
 
-            // Below we are getting Title and Note from our edit text (UI)
+            // Below we are getting Title and Note from our edit text (UI).
             val noteTitle = et_text_title.text.toString().trim()
             val noteBody = et_text_note.text.toString().trim()
 
@@ -46,7 +46,7 @@ class AddNoteFragment : BaseFragment() {
                 et_text_title.requestFocus()
                 return@setOnClickListener
             }
-            // Validation if Note Body is empty
+            // Validation if Note Body is empty.
             if (noteBody.isEmpty()) {
                 et_text_title.error = "Title Required"
                 et_text_title.requestFocus()
@@ -59,7 +59,7 @@ class AddNoteFragment : BaseFragment() {
             launch {
 
                 context?.let {
-                    //Initialized mnote variable to edit it,
+                    // Initialized mnote variable to edit it.
                     val mnote = Note(noteTitle, noteBody)
 
                     if (note == null) {
@@ -107,7 +107,7 @@ class AddNoteFragment : BaseFragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    //It will create options bar in appbar with delete option.
+    // It will create options bar in appbar with delete option.
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu, menu)
