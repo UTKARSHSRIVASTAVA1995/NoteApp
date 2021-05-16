@@ -14,7 +14,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp">
+            android:background="#E59866 ">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_title"
@@ -43,5 +43,4 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
