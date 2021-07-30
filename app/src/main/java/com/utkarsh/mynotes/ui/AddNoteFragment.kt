@@ -2,16 +2,21 @@ package com.utkarsh.mynotes.ui
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.view.*
 import androidx.navigation.Navigation
 import com.utkarsh.mynotes.R
 import com.utkarsh.mynotes.db.Note
 import com.utkarsh.mynotes.db.NoteDataBase
 import com.utkarsh.mynotes.util.toast
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
+import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 import kotlinx.android.synthetic.main.fragment_add_note.*
 import kotlinx.coroutines.launch
+import java.util.*
 
-class AddNoteFragment : BaseFragment() {
+public class AddNoteFragment : BaseFragment(), DatePickerDialog.OnDateSetListener,
+    TimePickerDialog.OnTimeSetListener {
 
     private var note: Note? = null
 
@@ -33,6 +38,11 @@ class AddNoteFragment : BaseFragment() {
             et_text_title.setText(note?.title)
             et_text_note.setText(note?.note)
         }
+
+        et_date.setOnClickListener { view ->
+            getDate()
+        }
+
 
         button_save.setOnClickListener { view ->
 
@@ -111,5 +121,27 @@ class AddNoteFragment : BaseFragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu, menu)
+    }
+
+    private fun getDate() {
+        val calendar = Calendar.getInstance()
+        var date = Date()
+        calendar.time = date
+        val hour = calendar[Calendar.HOUR_OF_DAY]
+        val minute = calendar[Calendar.MINUTE]
+
+        val timePickerDialog = TimePickerDialog.newInstance(
+            this,
+            hour,
+            minute,
+            DateFormat.is24HourFormat(getContext())
+        )
+    }
+
+    override fun onDateSet(view: DatePickerDialog?, year: Int, monthOfYear: Int, dayOfMonth: Int) {
+    }
+
+
+    override fun onTimeSet(view: TimePickerDialog?, hourOfDay: Int, minute: Int, second: Int) {
     }
 }
