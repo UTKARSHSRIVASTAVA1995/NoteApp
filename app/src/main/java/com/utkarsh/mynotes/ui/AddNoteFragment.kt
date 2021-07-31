@@ -1,9 +1,15 @@
 package com.utkarsh.mynotes.ui
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
+import android.hardware.input.InputManager
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.view.*
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.navigation.Navigation
 import com.utkarsh.mynotes.R
 import com.utkarsh.mynotes.db.Note
@@ -13,12 +19,14 @@ import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 import kotlinx.android.synthetic.main.fragment_add_note.*
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.*
 
-public class AddNoteFragment : BaseFragment(), DatePickerDialog.OnDateSetListener,
+class AddNoteFragment : BaseFragment(), DatePickerDialog.OnDateSetListener,
     TimePickerDialog.OnTimeSetListener {
 
     private var note: Note? = null
+    private var mUserReminder: Date? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,10 +47,11 @@ public class AddNoteFragment : BaseFragment(), DatePickerDialog.OnDateSetListene
             et_text_note.setText(note?.note)
         }
 
-        et_date.setOnClickListener { view ->
+        // Below is the Time click where we are setting the Time in Edit Text
+        et_date.setOnClickListener {
+            hideKeyBoard(et_date)
             getDate()
         }
-
 
         button_save.setOnClickListener { view ->
 
@@ -67,7 +76,6 @@ public class AddNoteFragment : BaseFragment(), DatePickerDialog.OnDateSetListene
             // Means note Tile and note Body to get the text from the Edit Text.
             // Below we are Calling the NoteDataBase in Coroutines.
             launch {
-
                 context?.let {
                     // Initialized mnote variable to edit it.
                     val mnote = Note(noteTitle, noteBody)
@@ -123,6 +131,7 @@ public class AddNoteFragment : BaseFragment(), DatePickerDialog.OnDateSetListene
         inflater.inflate(R.menu.menu, menu)
     }
 
+    //Below Method We are getting the Date and Time
     private fun getDate() {
         val calendar = Calendar.getInstance()
         var date = Date()
@@ -134,14 +143,50 @@ public class AddNoteFragment : BaseFragment(), DatePickerDialog.OnDateSetListene
             this,
             hour,
             minute,
-            DateFormat.is24HourFormat(getContext())
+            DateFormat.is24HourFormat(context)
         )
+        activity?.let { timePickerDialog.show(it.supportFragmentManager, "TimeFragment") }
     }
 
-    override fun onDateSet(view: DatePickerDialog?, year: Int, monthOfYear: Int, dayOfMonth: Int) {
-    }
-
+    //Below Two method onDateSet and onTimeSet is from wdullaer Dependencyto get Date and Time from Calendar.
+    override fun onDateSet(view: DatePickerDialog?, year: Int, monthOfYear: Int, dayOfMonth: Int) {}
 
     override fun onTimeSet(view: TimePickerDialog?, hourOfDay: Int, minute: Int, second: Int) {
+        setTime(hourOfDay, minute)
     }
+
+    private fun setTime(hour: Int, minute: Int) {
+        val calendar = Calendar.getInstance()
+        if (mUserReminder != null) {
+            calendar.time = mUserReminder
+        }
+        var year: Int = calendar.get(Calendar.YEAR)
+        var month: Int = calendar.get(Calendar.MONTH)
+        var day: Int = calendar.get(Calendar.DAY_OF_MONTH)
+        calendar.set(year, month, day)
+        mUserReminder = calendar.time
+        setTimeEditText()
+    }
+
+    private fun setTimeEditText() {
+        var dateFormat: String
+        if (DateFormat.is24HourFormat(context)) {
+            dateFormat = "k:mm"
+        } else {
+            dateFormat = "h:mm a"
+        }
+        et_date.setText(mUserReminder?.let { formatDate(dateFormat, it) })
+    }
+
+    private fun formatDate(formatString: String, dateFormat: Date): String? {
+        var simpledateFormat = SimpleDateFormat(formatString)
+        return simpledateFormat.format(dateFormat)
+    }
+
+    private fun hideKeyBoard(et: EditText) {
+        val im: InputMethodManager =
+            context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        im.hideSoftInputFromWindow(et.windowToken, 0)
+    }
+
 }
