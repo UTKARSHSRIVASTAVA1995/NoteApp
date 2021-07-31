@@ -3,13 +3,11 @@ package com.utkarsh.mynotes.ui
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
-import android.hardware.input.InputManager
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.navigation.Navigation
 import com.utkarsh.mynotes.R
 import com.utkarsh.mynotes.db.Note
@@ -26,7 +24,7 @@ class AddNoteFragment : BaseFragment(), DatePickerDialog.OnDateSetListener,
     TimePickerDialog.OnTimeSetListener {
 
     private var note: Note? = null
-    private var mUserReminder: Date? = null
+    var mUserReminder: Date? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -134,7 +132,7 @@ class AddNoteFragment : BaseFragment(), DatePickerDialog.OnDateSetListener,
     //Below Method We are getting the Date and Time
     private fun getDate() {
         val calendar = Calendar.getInstance()
-        var date = Date()
+        val date = Date()
         calendar.time = date
         val hour = calendar[Calendar.HOUR_OF_DAY]
         val minute = calendar[Calendar.MINUTE]
@@ -148,45 +146,47 @@ class AddNoteFragment : BaseFragment(), DatePickerDialog.OnDateSetListener,
         activity?.let { timePickerDialog.show(it.supportFragmentManager, "TimeFragment") }
     }
 
-    //Below Two method onDateSet and onTimeSet is from wdullaer Dependencyto get Date and Time from Calendar.
+    //Below Two method onDateSet and onTimeSet is from wdullaer Dependency to get Date and Time from Calendar.
     override fun onDateSet(view: DatePickerDialog?, year: Int, monthOfYear: Int, dayOfMonth: Int) {}
 
     override fun onTimeSet(view: TimePickerDialog?, hourOfDay: Int, minute: Int, second: Int) {
-        setTime(hourOfDay, minute)
+        setTime()
     }
 
-    private fun setTime(hour: Int, minute: Int) {
+    //Below we are Setting time to edit text
+    private fun setTime() {
         val calendar = Calendar.getInstance()
         if (mUserReminder != null) {
-            calendar.time = mUserReminder
+            mUserReminder = calendar.time
         }
-        var year: Int = calendar.get(Calendar.YEAR)
-        var month: Int = calendar.get(Calendar.MONTH)
-        var day: Int = calendar.get(Calendar.DAY_OF_MONTH)
+        val year: Int = calendar.get(Calendar.YEAR)
+        val month: Int = calendar.get(Calendar.MONTH)
+        val day: Int = calendar.get(Calendar.DAY_OF_MONTH)
         calendar.set(year, month, day)
         mUserReminder = calendar.time
         setTimeEditText()
     }
 
+    // Below method is created to set the format of Time
     private fun setTimeEditText() {
-        var dateFormat: String
-        if (DateFormat.is24HourFormat(context)) {
-            dateFormat = "k:mm"
+        val dateFormat: String = if (DateFormat.is24HourFormat(context)) {
+            "k:mm"
         } else {
-            dateFormat = "h:mm a"
+            "h:mm a"
         }
         et_date.setText(mUserReminder?.let { formatDate(dateFormat, it) })
     }
 
+    @SuppressLint("SimpleDateFormat")
     private fun formatDate(formatString: String, dateFormat: Date): String? {
-        var simpledateFormat = SimpleDateFormat(formatString)
+        val simpledateFormat = SimpleDateFormat(formatString)
         return simpledateFormat.format(dateFormat)
     }
 
+    //Below is the Method to hide the keypoard.
     private fun hideKeyBoard(et: EditText) {
         val im: InputMethodManager =
             context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         im.hideSoftInputFromWindow(et.windowToken, 0)
     }
-
 }

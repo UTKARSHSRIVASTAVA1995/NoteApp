@@ -41,7 +41,6 @@
         app:layout_constraintLeft_toLeftOf="@id/et_date"
         app:layout_constraintRight_toRightOf="@id/et_date" />
 
-
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/et_date"
         android:layout_width="wrap_content"

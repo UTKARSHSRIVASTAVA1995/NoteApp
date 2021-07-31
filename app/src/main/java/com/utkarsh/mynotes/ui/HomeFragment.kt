@@ -31,7 +31,7 @@ class HomeFragment : BaseFragment() {
           //  recycler_view_notes.layoutManager = StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
 
 
-        //Displaying All notes in the RecyclerView Staggered grid view using Coroutines.
+        //Displaying All notes in the RecyclerView  using Coroutines.
         launch {
             context?.let {
 
